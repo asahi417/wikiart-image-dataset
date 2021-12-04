@@ -38,13 +38,13 @@ setup(
         "ISR",
         "pillow",
         "gdown"
-    ],
-    python_requires='>=3.6',
-    entry_points={
-        'console_scripts': [
-            'torchglow-wikiart-image = torchglow_cli.wikiart_visualizer:main',
-            'torchglow-wikiart-init = torchglow_cli.wikiart_init:main',
-        ]
+    ]
+    # python_requires='>=3.6',
+    # entry_points={
+    #     'console_scripts': [
+    #         'torchglow-wikiart-image = torchglow_cli.wikiart_visualizer:main',
+    #         'torchglow-wikiart-init = torchglow_cli.wikiart_init:main',
+    #     ]
     }
 )
 
