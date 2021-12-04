@@ -15,6 +15,8 @@ from itertools import permutations
 from typing import List
 from tqdm import tqdm
 
+from .util import wget
+
 CACHE_DIR = '{}/.cache/wikiartcrawler'.format(os.path.expanduser('~'))
 os.makedirs(CACHE_DIR, exist_ok=True)
 CUSTOM_ARTISTS = {
@@ -99,6 +101,7 @@ def get_painting_detail(paint_id: str = '57e00504edc2ca0d8c0b38a2', session_key:
 class WikiartAPI:
 
     def __init__(self,
+                 credentials_file: str = None,
                  credentials: List = None,
                  access_code: str = None,
                  secret_code: str = None,
@@ -106,6 +109,9 @@ class WikiartAPI:
                  force_refresh_artist_id: bool = False,
                  session_num: int = 10,
                  cache_dir: str = None):
+        if credentials_file is not None:
+            with open(credentials_file) as f:
+                credentials = [json.loads(i) for i in f.read().split('\n') if len(i) > 0]
         if (access_code and secret_code) or credentials:
             if credentials is None:
                 credentials = {"access_code": access_code, "secret_code": secret_code}
@@ -129,11 +135,9 @@ class WikiartAPI:
         self.cur_session_key_index = 0
         self.cache_dir = CACHE_DIR if cache_dir is None else cache_dir
 
-        if not force_refresh_artist_id:
-
-        cache_file = '{}/artists.json'.format(self.cache_dir)
         self.dict_group = self.get_full_group(force_refresh_artist_id)
         self.dict_artist = self.get_full_artist(force_refresh_artist_id)
+
         # artist on wikiart
         self.artist_wikiart = sorted(list(self.dict_artist.keys()))
 
@@ -149,44 +153,53 @@ class WikiartAPI:
 
     def get_full_group(self, force_refresh_artist_id):
         cache_file = '{}/dictionaries.json'.format(self.cache_dir)
-        if os.path.exists(cache_file):
+        if os.path.exists(cache_file) and not force_refresh_artist_id:
             with open(cache_file) as f:
                 return json.load(f)
-        else:
-            data = api_request('https://www.wikiart.org/en/api/2/UpdatedDictionaries', self.session_key)
-            data = {i['title']: {'id': i['id'], 'url': i['url'], 'group': i['group']} for i in data}
-            with open(cache_file, 'w') as f:
-                json.dump(data, f)
-            return data
+        if not force_refresh_artist_id:
+            wget('https://raw.githubusercontent.com/asahi417/wikiart-crawler/master/assets/dictionaries.json',
+                 cache_dir=self.cache_dir)
+            with open(cache_file) as f:
+                return json.load(f)
+        data = api_request('https://www.wikiart.org/en/api/2/UpdatedDictionaries', self.session_key)
+        data = {i['title']: {'id': i['id'], 'url': i['url'], 'group': i['group']} for i in data}
+        with open(cache_file, 'w') as f:
+            json.dump(data, f)
+        return data
 
     def get_full_artist(self, force_refresh_artist_id):
         cache_file = '{}/artists.json'.format(self.cache_dir)
         # logging.warning("This endpoint has an issue and will return partial list only.")
-        if not os.path.exists(cache_file):
-            # basic request (this returns only partial artists)
-            data = api_request('https://www.wikiart.org/en/api/2/UpdatedArtists', self.session_key, ignore_error=True)
-            data = {i['url']: i['id'] for i in data}
-            data.update(CUSTOM_ARTISTS)
-            logging.info('`UpdatedArtists` returned {} artists'.format(len(data)))
-
-            # heuristics to cover more artists
-            logging.info('heuristics query to enrich the artist list')
-            for a, b in tqdm(list(permutations(ascii_lowercase, 2))):
-                _data = api_request('https://www.wikiart.org/en/api/2/PaintingSearch?term={}{}'.format(a, b),
-                                    self.session_key)
-                if _data is None:
-                    break
-
-                for __data in _data:
-                    if __data['artistUrl'] not in data:
-                        data[__data['artistUrl']] = __data['artistId']
-            data = {k: v for k, v in data.items() if k is not None}
-            with open(cache_file, 'w') as f:
-                json.dump(data, f)
-        else:
+        if os.path.exists(cache_file) and not force_refresh_artist_id:
             with open(cache_file) as f:
-                data = json.load(f)
+                return json.load(f)
 
+        if not force_refresh_artist_id:
+            wget('https://raw.githubusercontent.com/asahi417/wikiart-crawler/master/assets/artists.json',
+                 cache_dir=self.cache_dir)
+            with open(cache_file) as f:
+                return json.load(f)
+
+        # basic request (this returns only partial artists)
+        data = api_request('https://www.wikiart.org/en/api/2/UpdatedArtists', self.session_key, ignore_error=True)
+        data = {i['url']: i['id'] for i in data}
+        data.update(CUSTOM_ARTISTS)
+        logging.info('`UpdatedArtists` returned {} artists'.format(len(data)))
+
+        # heuristics to cover more artists
+        logging.info('heuristics query to enrich the artist list')
+        for a, b in tqdm(list(permutations(ascii_lowercase, 2))):
+            _data = api_request('https://www.wikiart.org/en/api/2/PaintingSearch?term={}{}'.format(a, b),
+                                self.session_key)
+            if _data is None:
+                break
+
+            for __data in _data:
+                if __data['artistUrl'] not in data:
+                    data[__data['artistUrl']] = __data['artistId']
+        data = {k: v for k, v in data.items() if k is not None}
+        with open(cache_file, 'w') as f:
+            json.dump(data, f)
         return data
 
     def get_painting_info(self,

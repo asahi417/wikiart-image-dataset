@@ -36,7 +36,8 @@ setup(
         'opencv-python',
         "mediapipe",
         "ISR",
-        "pillow"
+        "pillow",
+        "gdown"
     ],
     python_requires='>=3.6',
     entry_points={
