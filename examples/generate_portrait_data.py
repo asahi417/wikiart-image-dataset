@@ -10,8 +10,9 @@ logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logg
 logging.info('***GENERATE PORTRAIT DATASET***')
 
 logging.info('Step 1: fetch images from wikiart')
-wikiart_credential = 'wikiart_credential.json'
-api = WikiartAPI(wikiart_credential)
+# wikiart_credential = 'wikiart_credential.json'
+# api = WikiartAPI(wikiart_credential)
+api = WikiartAPI()
 image_path = []
 for i in tqdm(api.artist_wikiart):
     tmp_image_files = api.get_painting(i)
