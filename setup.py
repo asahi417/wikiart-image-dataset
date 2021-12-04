@@ -35,7 +35,8 @@ setup(
         'numpy',
         'opencv-python',
         "mediapipe",
-        "ISR",
+        # "ISR",
+        'ISR @ git+ssh://git@github.com/asahi417/image-super-resolution',
         "pillow",
         "gdown"
     ]
