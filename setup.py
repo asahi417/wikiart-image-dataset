@@ -45,6 +45,6 @@ setup(
     #         'torchglow-wikiart-image = torchglow_cli.wikiart_visualizer:main',
     #         'torchglow-wikiart-init = torchglow_cli.wikiart_init:main',
     #     ]
-    }
+    # }
 )
 
