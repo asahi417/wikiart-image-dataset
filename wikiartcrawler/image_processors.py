@@ -215,7 +215,7 @@ def portrait_data_pipeline(
     assert type(export_path) is list and all(type(i) is str for i in export_path), export_path
     assert len(export_path) == len(image_path)
     logging.info('Portrait Data Pipeline:  process {} images'.format(len(image_path)))
-    for _i, _e in tqdm(zip(image_path, export_path)):
+    for _i, _e in tqdm(list(zip(image_path, export_path))):
         _e = process_single_image(_i, _e)
         if _e is not None:
             export_files.append(_e)
