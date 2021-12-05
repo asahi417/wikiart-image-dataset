@@ -108,11 +108,15 @@ class WikiartAPI:
                  session_key: List = None,
                  force_refresh_artist_id: bool = False,
                  session_num: int = 10,
-                 cache_dir: str = None):
-        if credentials_file is not None:
+                 cache_dir: str = None,
+                 skip_download: bool = False):
+        self.skip_download = skip_download
+        if self.skip_download:
+            assert not force_refresh_artist_id
+        if not self.skip_download and credentials_file is not None:
             with open(credentials_file) as f:
                 credentials = [json.loads(i) for i in f.read().split('\n') if len(i) > 0]
-        if (access_code and secret_code) or credentials:
+        if not self.skip_download and (access_code and secret_code) or credentials:
             if credentials is None:
                 credentials = {"access_code": access_code, "secret_code": secret_code}
             self._session_key = []
@@ -161,6 +165,7 @@ class WikiartAPI:
                  cache_dir=self.cache_dir)
             with open(cache_file) as f:
                 return json.load(f)
+        assert not self.skip_download
         data = api_request('https://www.wikiart.org/en/api/2/UpdatedDictionaries', self.session_key)
         data = {i['title']: {'id': i['id'], 'url': i['url'], 'group': i['group']} for i in data}
         with open(cache_file, 'w') as f:
@@ -181,6 +186,7 @@ class WikiartAPI:
                 return json.load(f)
 
         # basic request (this returns only partial artists)
+        assert not self.skip_download
         data = api_request('https://www.wikiart.org/en/api/2/UpdatedArtists', self.session_key, ignore_error=True)
         data = {i['url']: i['id'] for i in data}
         data.update(CUSTOM_ARTISTS)
@@ -218,6 +224,8 @@ class WikiartAPI:
         cache_file = '{}/painting/meta/{}.json'.format(self.cache_dir, artist_url)
         if not os.path.exists(cache_file):
             os.makedirs(os.path.dirname(cache_file), exist_ok=True)
+            if self.skip_download:
+                return None
             painting_info = api_request(
                 'https://www.wikiart.org/en/api/2/PaintingsByArtist?id={}'.format(artist_id),
                 self.session_key)
@@ -272,7 +280,6 @@ class WikiartAPI:
                      media: List = None,
                      genre: List = None,
                      style: List = None,
-                     skip_download: bool = False,
                      max_aspect_ratio: float = None,
                      min_height: int = None,
                      min_width: int = None):
@@ -280,6 +287,8 @@ class WikiartAPI:
         painting_info = self.get_painting_info(
             artist_url, year_start, year_end, media, genre, style, max_aspect_ratio, min_height, min_width
         )
+        if painting_info is None:
+            return None
         logging.info('downloading image: {} images, artist: {}'.format(len(painting_info), artist_url))
         cache_dir = '{}/painting/image/{}'.format(self.cache_dir, artist_url)
         os.makedirs(cache_dir, exist_ok=True)
@@ -291,9 +300,9 @@ class WikiartAPI:
             _id = data['image'].split('.')[-1]
             path = '{}/{}.{}'.format(cache_dir, data['url'], _id)
             if not os.path.exists(path):
-                if skip_download:
+                if self.skip_download:
                     logging.info('file not found but skip download: {}'.format(path))
                     continue
                 get_image(data['image'], path)
             image_files.append(path)
-        return image_files
+        return image_files if len(image_files) != 0 else None

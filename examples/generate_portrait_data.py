@@ -4,6 +4,9 @@ from tqdm import tqdm
 from wikiartcrawler import WikiartAPI, portrait_data_pipeline
 
 CREDENTIAL = os.getenv('CREDENTIAL', None)
+SKIP_DOWNLOAD = bool(int(os.getenv('SKIP_DOWNLOAD', 0)))
+print(CREDENTIAL)
+print(SKIP_DOWNLOAD)
 
 export_dir = './data/portrait'
 
@@ -14,10 +17,10 @@ logging.info('***GENERATE PORTRAIT DATASET***')
 logging.info('Step 1: fetch images from wikiart')
 # wikiart_credential = 'wikiart_credential.json'
 # api = WikiartAPI(wikiart_credential)
-api = WikiartAPI(CREDENTIAL)
+api = WikiartAPI(CREDENTIAL, skip_download=SKIP_DOWNLOAD)
 image_path = []
 for i in tqdm(api.artist_wikiart):
-    tmp_image_files = api.get_painting(i, skip_download=True)
+    tmp_image_files = api.get_painting(i)
     image_path += tmp_image_files
 
 logging.info('total {} images'.format(len(image_path)))
