@@ -33,6 +33,7 @@ def get_export_path(_path):
 
 export_path = [get_export_path(i) for i in image_path]
 
+
 logging.info('Step 2: process for portrait dataset')
 processed_files = portrait_data_pipeline(image_path, export_path=export_path)
 logging.info('total {} images'.format(len(processed_files)))

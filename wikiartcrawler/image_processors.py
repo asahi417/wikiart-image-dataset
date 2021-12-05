@@ -198,6 +198,8 @@ def portrait_data_pipeline(
                 pre_isr_image_path = new_file_path(_export_path, 'pre_isr', export_dir)
                 Image.fromarray(cv_img_out).save(pre_isr_image_path)
                 isr_model.predict(pre_isr_image_path, _export_path)
+                if not debug_mode:
+                    os.remove(pre_isr_image_path)
             return _export_path
         return None
 
