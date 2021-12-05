@@ -185,6 +185,7 @@ def portrait_data_pipeline(
             logging.info('file exists {}'.format(_export_path))
             return None
         cv_img_out = portrait_data_pipeline_single_image(_image_path)
+        os.makedirs(os.path.dirname(_export_path), exist_ok=True)
         if cv_img_out is not None:
             if debug_mode:
                 cv_img_out, sub = cv_img_out
