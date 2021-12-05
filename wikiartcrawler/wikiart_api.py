@@ -272,6 +272,7 @@ class WikiartAPI:
                      media: List = None,
                      genre: List = None,
                      style: List = None,
+                     skip_download: bool = False,
                      max_aspect_ratio: float = None,
                      min_height: int = None,
                      min_width: int = None):
@@ -290,6 +291,9 @@ class WikiartAPI:
             _id = data['image'].split('.')[-1]
             path = '{}/{}.{}'.format(cache_dir, data['url'], _id)
             if not os.path.exists(path):
+                if skip_download:
+                    logging.info('file not found but skip download: {}'.format(path))
+                    continue
                 get_image(data['image'], path)
             image_files.append(path)
         return image_files
