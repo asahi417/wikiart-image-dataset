@@ -1,7 +1,9 @@
+import os
 import logging
 from tqdm import tqdm
 from wikiartcrawler import WikiartAPI, portrait_data_pipeline
 
+CREDENTIAL = os.getenv('CREDENTIAL', None)
 
 export_dir = './data/portrait'
 
@@ -12,7 +14,7 @@ logging.info('***GENERATE PORTRAIT DATASET***')
 logging.info('Step 1: fetch images from wikiart')
 # wikiart_credential = 'wikiart_credential.json'
 # api = WikiartAPI(wikiart_credential)
-api = WikiartAPI()
+api = WikiartAPI(CREDENTIAL)
 image_path = []
 for i in tqdm(api.artist_wikiart):
     tmp_image_files = api.get_painting(i, skip_download=True)
