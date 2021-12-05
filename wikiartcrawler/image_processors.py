@@ -110,7 +110,7 @@ def get_face_angle(image):
 def portrait_data_pipeline(
         image_path,
         export_path=None,
-        export_dir: str = './portrait_data_output',
+        export_dir: str = None,
         suffix: str = 'portrait',
         min_nose_face_distance: int = 20,
         min_image_size: int = None,

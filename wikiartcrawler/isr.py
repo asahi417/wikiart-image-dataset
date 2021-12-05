@@ -23,7 +23,7 @@ class ISRModel:
                 image_path,
                 export_path=None,
                 suffix: str = 'isr',
-                export_dir: str = './isr_output'):
+                export_dir: str = None):
         if type(image_path) is str:
             if export_path is None:
                 export_path = new_file_path(image_path, suffix, export_dir)

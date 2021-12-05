@@ -10,6 +10,7 @@ import os
 import requests
 import logging
 import json
+from glob import glob
 from string import ascii_lowercase
 from itertools import permutations
 from typing import List
@@ -283,6 +284,9 @@ class WikiartAPI:
                      max_aspect_ratio: float = None,
                      min_height: int = None,
                      min_width: int = None):
+        if all(i is None for i in [year_start, year_end, media, genre, style, max_aspect_ratio, min_height, min_width]) and self.skip_download:
+            paths = glob('{}/painting/image/{}/*'.format(self.cache_dir, artist_url))
+            return paths if len(paths) != 0 else None
 
         painting_info = self.get_painting_info(
             artist_url, year_start, year_end, media, genre, style, max_aspect_ratio, min_height, min_width
