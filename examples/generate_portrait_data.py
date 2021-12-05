@@ -15,12 +15,12 @@ logging.info('Step 1: fetch images from wikiart')
 api = WikiartAPI()
 image_path = []
 for i in tqdm(api.artist_wikiart):
-    tmp_image_files = api.get_painting(i, skip_download=False)
+    tmp_image_files = api.get_painting(i, skip_download=True)
     image_path += tmp_image_files
 
 logging.info('total {} images'.format(len(image_path)))
 
-# logging.info('Step 2: process for portrait dataset')
-# processed_files = portrait_data_pipeline(image_path)
-# logging.info('total {} images'.format(len(processed_files)))
-# logging.info('dataset is ready at {}'.format(export_dir))
+logging.info('Step 2: process for portrait dataset')
+processed_files = portrait_data_pipeline(image_path)
+logging.info('total {} images'.format(len(processed_files)))
+logging.info('dataset is ready at {}'.format(export_dir))
