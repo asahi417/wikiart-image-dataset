@@ -21,7 +21,8 @@ api = WikiartAPI(CREDENTIAL, skip_download=SKIP_DOWNLOAD)
 image_path = []
 for i in tqdm(api.artist_wikiart):
     tmp_image_files = api.get_painting(i)
-    image_path += tmp_image_files
+    if tmp_image_files is not None:
+        image_path += tmp_image_files
 
 logging.info('total {} images'.format(len(image_path)))
 
