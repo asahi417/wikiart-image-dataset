@@ -9,6 +9,23 @@ import gdown
 
 __all__ = 'wget'
 
+URL_LIST = {
+    'abstract_expressionism': 'https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/abstract_expressionism.zip',
+    'baroque': 'https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/abstract_expressionism.zip',
+    'ecole_de_paris': 'https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/ecole_de_paris.zip',
+    'expressionism': 'https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/expressionism.zip',
+    'impressionism': 'https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/impressionism.zip',
+    'naive_art_primitivism': 'https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/naive_art_primitivism.zip',
+    'neo_impressionism': 'https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/neo_impressionism.zip',
+    'post_impressionism': 'https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/post_impressionism.zip',
+    'pre_raphaelite_brotherhood': 'https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/pre_raphaelite_brotherhood.zip',
+    'realism': 'https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/realism.zip',
+    'rococo': 'https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/rococo.zip',
+    'romanticism': 'https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/romanticism.zip',
+    'surrealism': 'https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/surrealism.zip',
+    'symbolism': 'https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/symbolism.zip'
+ }
+
 
 def new_file_path(path, suffix, export_dir: str = None):
     tmp = path.split('.')
@@ -18,14 +35,6 @@ def new_file_path(path, suffix, export_dir: str = None):
         path = '{}/{}'.format(export_dir, os.path.basename(path))
     path = '{}.{}.{}'.format(path, suffix, _id)
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    # if no_overwrite:
-    #     n = 1
-    #     while True:
-    #         if not os.path.exists(path):
-    #             break
-    #         _id = path.split('.')[-1]
-    #         path = path.replace(_id, '{}.{}'.format(n, _id))
-    #         n += 1
     return path
 
 

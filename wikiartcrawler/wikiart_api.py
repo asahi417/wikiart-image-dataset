@@ -7,6 +7,8 @@ Max IPs per hour: 10
 """
 
 import os
+import shutil
+
 import requests
 import logging
 import json
@@ -16,7 +18,7 @@ from itertools import permutations
 from typing import List
 from tqdm import tqdm
 
-from .util import wget
+from .util import wget, URL_LIST
 
 CACHE_DIR = '{}/.cache/wikiartcrawler'.format(os.path.expanduser('~'))
 os.makedirs(CACHE_DIR, exist_ok=True)
@@ -142,6 +144,7 @@ class WikiartAPI:
 
         self.dict_group = self.get_full_group(force_refresh_artist_id)
         self.dict_artist = self.get_full_artist(force_refresh_artist_id)
+        self.download_cached_images(force_refresh_artist_id)
 
         # artist on wikiart
         self.artist_wikiart = sorted(list(self.dict_artist.keys()))
@@ -155,6 +158,26 @@ class WikiartAPI:
         cur_sk = self._session_key[self.cur_session_key_index]
         self.cur_session_key_index += 1
         return cur_sk
+
+    def download_cached_images(self, force_refresh_artist_id):
+        logging.info('downloading cached image (this might take some time)')
+        target_dir = '{}/painting'.format(self.cache_dir)
+        if not os.path.exists(target_dir) or force_refresh_artist_id:
+            os.makedirs(target_dir, exist_ok=True)
+            wget('https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/meta.zip',
+                 cache_dir='{}/tmp'.format(self.cache_dir))
+            shutil.move('{}/tmp/meta'.format(self.cache_dir), target_dir)
+
+        os.makedirs('{}/painting/image'.format(self.cache_dir), exist_ok=True)
+        for k, url in URL_LIST.items():
+            cache_dir = '{}/tmp/{}'.format(self.cache_dir, k)
+            if not os.path.exists(cache_dir) or force_refresh_artist_id:
+                wget(url, cache_dir='{}/tmp'.format(self.cache_dir))
+            for d in glob('{}/tmp/{}/*'.format(self.cache_dir, k)):
+                target_dir = '{}/painting/image/{}'.format(self.cache_dir, os.path.basename(d))
+                if not os.path.exists(target_dir) or force_refresh_artist_id:
+                    shutil.move(d, os.path.dirname(target_dir))
+        logging.info('{} images in total'.format(len(glob('{}/painting/image/*/*.jpg'.format(self.cache_dir)))))
 
     def get_full_group(self, force_refresh_artist_id):
         cache_file = '{}/dictionaries.json'.format(self.cache_dir)
