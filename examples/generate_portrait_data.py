@@ -5,8 +5,6 @@ from wikiartcrawler import WikiartAPI, portrait_data_pipeline
 
 CREDENTIAL = os.getenv('CREDENTIAL', None)  # 'wikiart_credential.json'
 SKIP_DOWNLOAD = bool(int(os.getenv('SKIP_DOWNLOAD', 1)))
-print(CREDENTIAL)
-print(SKIP_DOWNLOAD)
 
 export_dir = './data/portrait'
 

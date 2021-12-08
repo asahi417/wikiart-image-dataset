@@ -161,21 +161,22 @@ class WikiartAPI:
 
     def download_cached_images(self, force_refresh_artist_id):
         logging.info('downloading cached image (this might take some time)')
-        target_dir = '{}/painting'.format(self.cache_dir)
+        target_dir = '{}/painting/meta'.format(self.cache_dir)
         if not os.path.exists(target_dir) or force_refresh_artist_id:
-            os.makedirs(target_dir, exist_ok=True)
+            os.makedirs(os.path.dirname(target_dir), exist_ok=True)
             wget('https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/meta.zip',
                  cache_dir='{}/tmp'.format(self.cache_dir))
             shutil.move('{}/tmp/meta'.format(self.cache_dir), target_dir)
 
-        os.makedirs('{}/painting/image'.format(self.cache_dir), exist_ok=True)
-        for k, url in URL_LIST.items():
-            cache_dir = '{}/tmp/{}'.format(self.cache_dir, k)
-            if not os.path.exists(cache_dir) or force_refresh_artist_id:
-                wget(url, cache_dir='{}/tmp'.format(self.cache_dir))
-            for d in glob('{}/tmp/{}/*'.format(self.cache_dir, k)):
-                target_dir = '{}/painting/image/{}'.format(self.cache_dir, os.path.basename(d))
-                if not os.path.exists(target_dir) or force_refresh_artist_id:
+        target_dir = '{}/painting/image'.format(self.cache_dir)
+        if not os.path.exists(target_dir) or force_refresh_artist_id:
+            os.makedirs(os.path.dirname(target_dir), exist_ok=True)
+            for k, url in URL_LIST.items():
+                cache_dir = '{}/tmp/{}'.format(self.cache_dir, k)
+                if not os.path.exists(cache_dir):
+                    wget(url, cache_dir='{}/tmp'.format(self.cache_dir))
+                for d in glob('{}/tmp/{}/*'.format(self.cache_dir, k)):
+                    target_dir = '{}/painting/image/{}'.format(self.cache_dir, os.path.basename(d))
                     shutil.move(d, os.path.dirname(target_dir))
         logging.info('{} images in total'.format(len(glob('{}/painting/image/*/*.jpg'.format(self.cache_dir)))))
 
