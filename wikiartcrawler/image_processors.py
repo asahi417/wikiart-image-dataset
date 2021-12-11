@@ -1,7 +1,6 @@
 import os
 import logging
 from itertools import chain
-from tqdm import tqdm
 
 import cv2
 import mediapipe as mp
@@ -107,7 +106,7 @@ def get_face_angle(image):
     return angle, co
 
 
-def portrait_data_pipeline(
+def generate_face_image(
         image_path: str,
         export_path: str = None,
         export_dir: str = None,
@@ -121,6 +120,7 @@ def portrait_data_pipeline(
         overwrite: bool = False,
         isr_model=None,
         isr_model_name: str = 'noise-cancel'):
+    """ Extract face from the image and  """
 
     if isr_model is None:
         isr_model = ISRModel(isr_model_name)

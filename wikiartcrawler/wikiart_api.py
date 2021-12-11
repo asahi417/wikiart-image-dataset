@@ -177,7 +177,7 @@ class WikiartAPI:
                     wget(url, cache_dir='{}/tmp'.format(self.cache_dir))
                 for d in glob('{}/tmp/{}/*'.format(self.cache_dir, k)):
                     target_dir = '{}/painting/image/{}'.format(self.cache_dir, os.path.basename(d))
-                    if os.path.exists(os.path.dirname(target_dir)):
+                    if os.path.exists(target_dir):
                         shutil.rmtree(d)
                     else:
                         shutil.move(d, os.path.dirname(target_dir))

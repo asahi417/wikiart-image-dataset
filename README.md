@@ -1,2 +1,1 @@
 # WikiART Crawler
-

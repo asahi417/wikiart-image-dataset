@@ -1,3 +1,4 @@
+""" Image Super Resolution. """
 import logging
 from tqdm import tqdm
 import numpy as np
