@@ -106,7 +106,7 @@ def get_face_angle(image):
     return angle, co
 
 
-def generate_face_image(
+def get_face_image(
         image_path: str,
         export_path: str = None,
         export_dir: str = None,
