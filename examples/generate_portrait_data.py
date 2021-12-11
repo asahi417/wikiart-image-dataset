@@ -1,7 +1,7 @@
 import os
 import logging
 from tqdm import tqdm
-from wikiartcrawler import WikiartAPI, portrait_data_pipeline, ISRModel
+from wikiartcrawler import WikiartAPI, get_face_image, ISRModel
 
 CREDENTIAL = os.getenv('CREDENTIAL', None)  # 'wikiart_credential.json'
 SKIP_DOWNLOAD = bool(int(os.getenv('SKIP_DOWNLOAD', 1)))
@@ -49,7 +49,7 @@ with open(non_portrait_images, 'w') as f:
         e = get_export_path(i)
         if os.path.exists(e):
             continue
-        _e = portrait_data_pipeline(i, export_path=e, isr_model=isr_model)
+        _e = get_face_image(i, export_path=e, isr_model=isr_model)
         if _e is None:
             f.write('{}\n'.format(basename))
 

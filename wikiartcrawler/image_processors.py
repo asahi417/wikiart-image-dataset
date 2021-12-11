@@ -120,7 +120,7 @@ def get_face_image(
         overwrite: bool = False,
         isr_model=None,
         isr_model_name: str = 'noise-cancel'):
-    """ Extract face from the image and  """
+    """ Detect a human-face in the image, align the face angle, crop and super-resolution, to get the face image. """
 
     if isr_model is None:
         isr_model = ISRModel(isr_model_name)
