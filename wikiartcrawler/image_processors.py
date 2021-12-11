@@ -108,8 +108,8 @@ def get_face_angle(image):
 
 
 def portrait_data_pipeline(
-        image_path,
-        export_path=None,
+        image_path: str,
+        export_path: str = None,
         export_dir: str = None,
         suffix: str = 'portrait',
         min_nose_face_distance: int = 20,
@@ -119,9 +119,11 @@ def portrait_data_pipeline(
         output_size: int = 256,
         debug_mode: bool = False,
         overwrite: bool = False,
-        isr_model: str = 'noise-cancel'):
+        isr_model=None,
+        isr_model_name: str = 'noise-cancel'):
 
-    isr_model = ISRModel(isr_model)
+    if isr_model is None:
+        isr_model = ISRModel(isr_model_name)
     anchor_size = int(output_size / 2)
     if min_image_size is None:
         min_image_size = anchor_size
@@ -176,52 +178,26 @@ def portrait_data_pipeline(
             return cv_img_resize, (cv_img_pad, cv_img_pad_copy, cv_img_pad_ro, cv_img_pad_ro_copy, cv_img_crop)
         return cv_img_resize
 
-    def process_single_image(_image_path, _export_path):
-        if _export_path is None:
-            _export_path = new_file_path(_image_path, suffix, export_dir)
-        else:
-            assert type(_export_path) is str, _export_path
-        if os.path.exists(_export_path) and not overwrite:
-            logging.info('file exists {}'.format(_export_path))
-            return None
-        cv_img_out = portrait_data_pipeline_single_image(_image_path)
-        os.makedirs(os.path.dirname(_export_path), exist_ok=True)
-        if cv_img_out is not None:
-            if debug_mode:
-                cv_img_out, sub = cv_img_out
-                for _n, s in enumerate(sub):
-                    Image.fromarray(s).save(new_file_path(_export_path, 'debug_{}'.format(_n), export_dir))
-            assert cv_img_out.shape[0] in [output_size, anchor_size], cv_img_out.shape
-            if cv_img_out.shape[0] == output_size:
-                Image.fromarray(cv_img_out).save(_export_path)
-            else:
-                pre_isr_image_path = new_file_path(_export_path, 'pre_isr', export_dir)
-                Image.fromarray(cv_img_out).save(pre_isr_image_path)
-                isr_model.predict(pre_isr_image_path, _export_path)
-                if not debug_mode:
-                    os.remove(pre_isr_image_path)
-            return _export_path
-        return None
-
-    export_files = []
-    if type(image_path) is str:
-        image_path = [image_path]
-        if export_path is not None:
-            assert export_path is str, export_path
-            export_path = [export_path]
-
-    assert type(image_path) is list and all(type(i) is str for i in image_path), image_path
     if export_path is None:
-        export_path = [new_file_path(i, suffix, export_dir) for i in image_path]
-
-    assert type(export_path) is list and all(type(i) is str for i in export_path), export_path
-    assert len(export_path) == len(image_path)
-    logging.info('Portrait Data Pipeline:  process {} images'.format(len(image_path)))
-    for _i, _e in tqdm(list(zip(image_path, export_path))):
-        _e = process_single_image(_i, _e)
-        if _e is not None:
-            export_files.append(_e)
-    if len(image_path) == 1:
-        return export_files[0] if len(export_files) > 0 else None
-    return export_files
-
+        export_path = new_file_path(image_path, suffix, export_dir)
+    if os.path.exists(export_path) and not overwrite:
+        logging.info('file exists {}'.format(export_path))
+        return export_path
+    cv_img_out = portrait_data_pipeline_single_image(image_path)
+    os.makedirs(os.path.dirname(export_path), exist_ok=True)
+    if cv_img_out is None:
+        return None
+    if debug_mode:
+        cv_img_out, sub = cv_img_out
+        for _n, s in enumerate(sub):
+            Image.fromarray(s).save(new_file_path(export_path, 'debug_{}'.format(_n), export_dir))
+    assert cv_img_out.shape[0] in [output_size, anchor_size], cv_img_out.shape
+    if cv_img_out.shape[0] == output_size:
+        Image.fromarray(cv_img_out).save(export_path)
+    else:
+        pre_isr_image_path = new_file_path(export_path, 'pre_isr', export_dir)
+        Image.fromarray(cv_img_out).save(pre_isr_image_path)
+        isr_model.predict(pre_isr_image_path, export_path)
+        if not debug_mode:
+            os.remove(pre_isr_image_path)
+    return export_path
