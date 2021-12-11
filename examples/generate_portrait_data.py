@@ -1,4 +1,5 @@
 import os
+import gc
 import logging
 from tqdm import tqdm
 from wikiartcrawler import WikiartAPI, get_face_image, ISRModel
@@ -52,5 +53,6 @@ with open(non_portrait_images, 'w') as f:
         _e = get_face_image(i, export_path=e, isr_model=isr_model)
         if _e is None:
             f.write('{}\n'.format(basename))
+        gc.collect()
 
 logging.info('dataset is ready at {}'.format(export_dir))

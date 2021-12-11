@@ -128,7 +128,7 @@ def get_face_image(
     if min_image_size is None:
         min_image_size = anchor_size
 
-    def portrait_data_pipeline_single_image(_image_path):
+    def _get_face_image(_image_path):
         cv_img = cv2.cvtColor(cv2.imread(_image_path), cv2.COLOR_BGR2RGB)
         # get facial landmark
         feature = get_face_angle(cv_img)
@@ -176,6 +176,9 @@ def get_face_image(
                                thickness=2)
                 cv2.rectangle(cv_img_pad_ro_copy, (x_pad, y_pad), (x_pad + w, y_pad + h), (255, 0, 0), 2)
             return cv_img_resize, (cv_img_pad, cv_img_pad_copy, cv_img_pad_ro, cv_img_pad_ro_copy, cv_img_crop)
+        del cv_img_pad
+        del cv_img_pad_ro
+        del cv_img_crop
         return cv_img_resize
 
     if export_path is None:
@@ -183,10 +186,10 @@ def get_face_image(
     if os.path.exists(export_path) and not overwrite:
         logging.info('file exists {}'.format(export_path))
         return export_path
-    cv_img_out = portrait_data_pipeline_single_image(image_path)
-    os.makedirs(os.path.dirname(export_path), exist_ok=True)
+    cv_img_out = _get_face_image(image_path)
     if cv_img_out is None:
         return None
+    os.makedirs(os.path.dirname(export_path), exist_ok=True)
     if debug_mode:
         cv_img_out, sub = cv_img_out
         for _n, s in enumerate(sub):
@@ -200,4 +203,5 @@ def get_face_image(
         isr_model.predict(pre_isr_image_path, export_path)
         if not debug_mode:
             os.remove(pre_isr_image_path)
+    del cv_img_out
     return export_path
