@@ -42,7 +42,7 @@ def get_export_path(_path):
 
 isr_model = ISRModel('noise-cancel')
 with open(non_portrait_images, 'w') as f:
-    f.write('\n'.join(non_portrait_images_files))
+    f.write('\n'.join(non_portrait_images_files) + '\n')
     for i in tqdm(image_path):
         basename = '/'.join(i.split('/')[-2:])
         if basename in non_portrait_images_files:
