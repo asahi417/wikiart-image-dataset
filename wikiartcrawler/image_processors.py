@@ -186,7 +186,11 @@ def get_face_image(
     if os.path.exists(export_path) and not overwrite:
         logging.info('file exists {}'.format(export_path))
         return export_path
-    cv_img_out = _get_face_image(image_path)
+    try:
+        cv_img_out = _get_face_image(image_path)
+    except Exception:
+        logging.exception('Error at _get_face_image')
+        return None
     if cv_img_out is None:
         return None
     os.makedirs(os.path.dirname(export_path), exist_ok=True)
