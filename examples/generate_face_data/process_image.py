@@ -7,7 +7,7 @@ from wikiartcrawler import WikiartAPI, get_face_image, ISRModel
 CREDENTIAL = os.getenv('CREDENTIAL', None)  # 'wikiart_credential.json'
 SKIP_DOWNLOAD = bool(int(os.getenv('SKIP_DOWNLOAD', 1)))
 
-export_dir = './data/portrait'
+export_dir = './data/image_face'
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.DEBUG, datefmt='%Y-%m-%d %H:%M:%S')
 

@@ -11,6 +11,14 @@ logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logg
 class Test(unittest.TestCase):
     """ Test ISR model"""
 
+    def test_face_image(self):
+        # artist = 'paul-cezanne'
+        artist = '*'
+        api = WikiartAPI()
+        out = api.get_painting(artist, image_type='face')
+        print(len(out))
+        # api.get_painting_info(artist)
+
     def test_init(self):
         artist = 'paul-cezanne'
         api = WikiartAPI()

@@ -112,7 +112,7 @@ class WikiartAPI:
                  force_refresh_artist_id: bool = False,
                  session_num: int = 10,
                  cache_dir: str = None,
-                 skip_download: bool = False):
+                 skip_download: bool = True):
         self.skip_download = skip_download
         if self.skip_download:
             assert not force_refresh_artist_id
@@ -161,6 +161,7 @@ class WikiartAPI:
 
     def download_cached_images(self, force_refresh_artist_id):
         logging.info('downloading cached image (this might take some time)')
+        os.makedirs('{}/tmp'.format(self.cache_dir), exist_ok=True)
         target_dir = '{}/painting/meta'.format(self.cache_dir)
         if not os.path.exists(target_dir) or force_refresh_artist_id:
             os.makedirs(os.path.dirname(target_dir), exist_ok=True)
@@ -182,6 +183,13 @@ class WikiartAPI:
                     else:
                         shutil.move(d, os.path.dirname(target_dir))
         logging.info('{} images in total'.format(len(glob('{}/painting/image/*/*.jpg'.format(self.cache_dir)))))
+
+        target_dir = '{}/painting/image_face'.format(self.cache_dir)
+        if not os.path.exists(target_dir) or force_refresh_artist_id:
+            wget('https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/image_face.zip',
+                 cache_dir='{}/tmp'.format(self.cache_dir))
+            shutil.move('{}/tmp/image_face'.format(self.cache_dir), target_dir)
+        shutil.rmtree('{}/tmp'.format(self.cache_dir))
 
     def get_full_group(self, force_refresh_artist_id):
         cache_file = '{}/dictionaries.json'.format(self.cache_dir)
@@ -310,9 +318,17 @@ class WikiartAPI:
                      style: List = None,
                      max_aspect_ratio: float = None,
                      min_height: int = None,
-                     min_width: int = None):
+                     min_width: int = None,
+                     image_type: str = None):
+        raw_image = True
+        if image_type is not None:
+            image_type = 'image_{}'.format(image_type)
+            raw_image = False
+        else:
+            image_type = 'image'
+
         if all(i is None for i in [year_start, year_end, media, genre, style, max_aspect_ratio, min_height, min_width]) and self.skip_download:
-            paths = glob('{}/painting/image/{}/*'.format(self.cache_dir, artist_url))
+            paths = glob('{}/painting/{}/{}/*.jpg'.format(self.cache_dir, image_type, artist_url))
             return paths if len(paths) != 0 else None
 
         painting_info = self.get_painting_info(
@@ -321,7 +337,7 @@ class WikiartAPI:
         if painting_info is None:
             return None
         logging.info('downloading image: {} images, artist: {}'.format(len(painting_info), artist_url))
-        cache_dir = '{}/painting/image/{}'.format(self.cache_dir, artist_url)
+        cache_dir = '{}/painting/{}/{}'.format(self.cache_dir, image_type, artist_url)
         os.makedirs(cache_dir, exist_ok=True)
         image_files = []
         for data in tqdm(painting_info):
@@ -331,9 +347,10 @@ class WikiartAPI:
             _id = data['image'].split('.')[-1]
             path = '{}/{}.{}'.format(cache_dir, data['url'], _id)
             if not os.path.exists(path):
-                if self.skip_download:
+                if self.skip_download or not raw_image:
                     logging.info('file not found but skip download: {}'.format(path))
                     continue
+                logging.info('file not found, downloading {}'.format(path))
                 get_image(data['image'], path)
             image_files.append(path)
         return image_files if len(image_files) != 0 else None

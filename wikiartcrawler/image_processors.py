@@ -53,10 +53,12 @@ def get_face_landmark(image_path=None, cv2_image=None):
         assert image_path is not None
         cv2_image = cv2.imread(image_path)
         cv2_image = cv2.cvtColor(cv2_image, cv2.COLOR_BGR2RGB)
+    mp_face_mesh = mp.solutions.face_mesh
     shape = cv2_image.shape
-    results = mp.solutions.face_mesh.FaceMesh().process(cv2_image)
-    if results.multi_face_landmarks is None:
-        return None
+    with mp_face_mesh.FaceMesh() as face_mesh:
+        results = face_mesh.process(cv2_image)
+        if results.multi_face_landmarks is None:
+            return None
 
     lm = results.multi_face_landmarks[0].landmark
     cos = {}
