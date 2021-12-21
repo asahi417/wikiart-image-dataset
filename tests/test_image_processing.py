@@ -3,7 +3,7 @@ import unittest
 import logging
 import shutil
 from glob import glob
-from wikiartcrawler import portrait_data_pipeline
+from wikiartcrawler import get_face_image
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.DEBUG, datefmt='%Y-%m-%d %H:%M:%S')
 
@@ -15,7 +15,7 @@ class Test(unittest.TestCase):
     """ Test ISR model"""
 
     def test(self):
-        out = portrait_data_pipeline(source_images, export_dir='tests/test_images_processed', debug_mode=True)
+        out = get_face_image(source_images, export_dir='tests/test_images_processed', debug_mode=True)
         print(out)
 
 

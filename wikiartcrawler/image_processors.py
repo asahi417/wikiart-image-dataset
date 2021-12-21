@@ -108,6 +108,16 @@ def get_face_angle(image):
     return angle, co
 
 
+def blur_image(image):
+    w, h, _ = image.shape
+    center = (int(w/2), int(h/2))
+    blurred_img = cv2.GaussianBlur(image, (21, 21), 0, cv2.BORDER_REFLECT)
+    mask = np.zeros((w, h, 3), dtype=np.uint8)
+    mask = cv2.circle(mask, center, 100, (255, 255, 255), -1)
+    out = np.where(mask == (255, 255, 255), image, blurred_img)
+    return out
+
+
 def get_face_image(
         image_path: str,
         export_path: str = None,
