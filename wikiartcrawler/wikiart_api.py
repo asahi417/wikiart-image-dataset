@@ -189,6 +189,13 @@ class WikiartAPI:
             wget('https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/image_face.zip',
                  cache_dir='{}/tmp'.format(self.cache_dir))
             shutil.move('{}/tmp/image_face'.format(self.cache_dir), target_dir)
+
+        target_dir = '{}/painting/image_face_blur'.format(self.cache_dir)
+        if not os.path.exists(target_dir) or force_refresh_artist_id:
+            wget('https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/image_face_blur.zip',
+                 cache_dir='{}/tmp'.format(self.cache_dir))
+            shutil.move('{}/tmp/image_face_blur'.format(self.cache_dir), target_dir)
+
         shutil.rmtree('{}/tmp'.format(self.cache_dir))
 
     def get_full_group(self, force_refresh_artist_id):
