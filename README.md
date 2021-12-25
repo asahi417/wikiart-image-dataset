@@ -1,6 +1,6 @@
 # WikiART Crawler
 <p align="center">
-  <img src="asset/wikiart_raw.png.png" width="400">
+  <img src="assets/wikiart_raw.png" width="400">
 </p>
 
 **WikiART Crawler** is a python-library to download/process images from [WikiART](https://www.wikiart.org/) via WikiART API. 
