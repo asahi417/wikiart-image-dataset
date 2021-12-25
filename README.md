@@ -4,16 +4,17 @@
 </p>
 
 **WikiART Crawler** is a python-library to download/process images from [WikiART](https://www.wikiart.org/) via WikiART API. 
-If you are interested in the WikiART image set only, see [dataset section](#dataset-links).
+If you are interested in the **WikiART Image Dataset** only, see [dataset section](#dataset-links).
 
-## Get Started
+
+## Basic Usage
+First clone/install the library.
 ```shell
 git clone https://github.com/asahi417/wikiart-crawler
 cd wikiart-crawler
 pip install .
 ```
 
-## Basic Usage
 The basic usage is to specify a single artist and get the file paths of the artist's image downloaded locally at the first time
 (the cache directory is `~/.cache/wikiartcrawler` as default).
 ```python
@@ -49,17 +50,32 @@ api.get_painting('paul-cezanne', media=['oil', 'canvas'], style=['portrait'])
 api.get_painting('paul-cezanne', media=['oil', 'canvas'], style=['landscape'])
 ```
 
-
-
-### ArtFace Dataset
+## WikiArt Face
+Inspired by [CelebA dataset](https://mmlab.ie.cuhk.edu.hk/projects/CelebA.html), we release ***WikiArt Face*** that is an image dataset of face from portraits.
 
 <p align="center">
-  <img src="asset/overview.png" width="500">
+  <img src="assets/wikiart_face.png" width="500">
 </p>   
+
+The entire pipeline to attain a face image from a portrait is described in the following diagram. 
+
+<p align="center">
+  <img src="assets/face_image_pipeline.png" width="500">
+</p>
+
+This image is available via the `wikiartcrawler` by specifying `image_type` argument.
+```python
+from wikiartcrawler import WikiartAPI
+api = WikiartAPI()
+# WikiArt Face  
+files = api.get_painting('paul-cezanne', image_type='face')
+# WikiArt Face (with background blur)
+files = api.get_painting('paul-cezanne', image_type='face_blur')
+```
 
 
 ## Dataset Links
-- Raw Images: The image files are divided by the art movement.
+- ***WikiArt Image***: The image files are divided by the art movement.
     * [`abstract-expressionism`](https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/abstract_expressionism.zip)
     * [`baroque`](https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/baroque.zip)
     * [`ecole-de-paris`](https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/ecole_de_paris.zip)
@@ -75,4 +91,6 @@ api.get_painting('paul-cezanne', media=['oil', 'canvas'], style=['landscape'])
     * [`romanticism`](https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/romanticism.zip)
     * [`surrealism`](https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/surrealism.zip)
     * [`symbolism`](https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/symbolism.zip)
-- Face Image: 
+- ***WikiArt Face***: See detail in the [WikiArt Face section](#wikiart-face).
+  * [wikiart face](https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/image_face.zip)
+  * [wikiart face (with background blur)](https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/image_face_blur.zip)
