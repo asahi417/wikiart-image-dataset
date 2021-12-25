@@ -73,6 +73,7 @@ files = api.get_painting('paul-cezanne', image_type='face')
 files = api.get_painting('paul-cezanne', image_type='face_blur')
 ```
 
+To reproduce the WikiArt Face image set, you can use [these scripts](./examples/generate_face_data).
 
 ## Dataset Links
 - ***WikiArt Image***: The image files are divided by the art movement.
