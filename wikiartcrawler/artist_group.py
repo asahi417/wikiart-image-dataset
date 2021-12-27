@@ -5,6 +5,12 @@ from .wikiart_api import CACHE_DIR
 
 __root = os.path.dirname(os.path.abspath(__file__))
 
+VALID_ARTIST_GROUPS = [
+    'abstract-expressionism', 'baroque', 'ecole-de-paris', 'expressionism',
+    'impressionism', 'naive-art-primitivism', 'neo-impressionism', 'neoclassicism', 'post-impressionism',
+    'pre-raphaelite-brotherhood', 'realism', 'rococo', 'romanticism', 'surrealism', 'symbolism'
+]
+
 
 def available_artist(cache_dir: str = None):
     cache_dir = CACHE_DIR if cache_dir is None else cache_dir

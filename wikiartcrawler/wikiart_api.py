@@ -334,7 +334,8 @@ class WikiartAPI:
         else:
             image_type = 'image'
 
-        if all(i is None for i in [year_start, year_end, media, genre, style, max_aspect_ratio, min_height, min_width]) and self.skip_download:
+        if all(i is None for i in [year_start, year_end, media, genre, style, max_aspect_ratio, min_height, min_width]) \
+                and self.skip_download:
             paths = glob('{}/painting/{}/{}/*.jpg'.format(self.cache_dir, image_type, artist_url))
             return paths if len(paths) != 0 else None
 
@@ -347,7 +348,7 @@ class WikiartAPI:
         cache_dir = '{}/painting/{}/{}'.format(self.cache_dir, image_type, artist_url)
         os.makedirs(cache_dir, exist_ok=True)
         image_files = []
-        for data in tqdm(painting_info):
+        for data in painting_info:
             if 'FRAME-600x480' in data['image']:
                 logging.warning('access blocked: {}'.format(data))
                 continue

@@ -1,9 +1,39 @@
-# WikiART Crawler
+# WikiART Face/WikiART General Imageset & WikiART Crawler
+
 <p align="center">
-  <img src="assets/wikiart_raw.png" width="400">
+<img src="assets/wikiart_face.png" width="400"><br>
+<em>Figure 1: Samples from WikiART Face dataset.</em>
 </p>
 
-**WikiART Crawler** is a python-library to download/process images from [WikiART](https://www.wikiart.org/) via WikiART API. 
+This is an official repository of ***WikiART Crawler***, a python-library to download/process images from [WikiART](https://www.wikiart.org/) via WikiART API,
+and two following image datasets created with the WikiART Crawler.
+- [***WikiART Face***](#wikiart-face): Image dataset of face produced from the portraits attained via WikiART Crawler. 
+- [***WikiART General***](#wikiart-general): Image dataset of paintings (landscape and portrait) attained via WikiART Crawler.
+
+## WikiART Face
+
+<p align="center">
+<img src="assets/face_image_pipeline.png" width="500"><br>
+<em>Figure 2: Pipeline to produce single WikiART Face image.</em>
+</p>
+
+WikiART Face is a collection of face from paintings. Inspired by the largest human-face image set [CelebA](https://mmlab.ie.cuhk.edu.hk/projects/CelebA.html),
+we process all the portraits from WikiART with the pipeline described in Figure 2. 
+As the final step, we blur the corner of each image so that model can pay more attention on the face rather than the background.
+We release both version of the dataset w/wo the final blur step.   
+
+## WikiART General
+
+<p align="center">
+  <img src="assets/wikiart_portrait.png" width="150">
+  <img src="assets/wikiart_landscape.png" width="150">
+  <img src="assets/wikiart_others.png" width="150"><br>
+<br>
+<em> Figure 3: Samples from WikiART General (`portrait`, `landscape`, `other` from left to right). </em>
+</p>
+
+WikiART General is 
+
 If you are interested in the **WikiART Image Dataset** only, see [dataset section](#dataset-links).
 
 
@@ -95,3 +125,4 @@ To reproduce the WikiArt Face image set, you can use [these scripts](./examples/
 - ***WikiArt Face***: See detail in the [WikiArt Face section](#wikiart-face).
   * [wikiart face](https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/image_face.zip)
   * [wikiart face (with background blur)](https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/image_face_blur.zip)
+  
