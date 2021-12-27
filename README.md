@@ -1,7 +1,7 @@
 # WikiART Face/WikiART General Imageset & WikiART Crawler
 
 <p align="center">
-<img src="assets/wikiart_face.png" width="400"><br>
+<img src="assets/wikiart_face.png" width="600"><br>
 <em>Figure 1: Samples from WikiART Face dataset.</em>
 </p>
 
