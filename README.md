@@ -131,12 +131,27 @@ The availabe art movements are `abstract-expressionism`, `baroque`, `ecole-de-pa
 To use WikiART Face image, you need to specify it by the `image_type` argument.
 
 ```python
-from wikiartcrawler import WikiartAPI
+from wikiartcrawler import WikiartAPI, get_artist, available_artist
 api = WikiartAPI()
 # WikiArt Face  
 image_path = api.get_painting('paul-cezanne', image_type='face')
 # WikiArt Face (with background blur)
 image_path = api.get_painting('paul-cezanne', image_type='face_blur')
+
+# Get all WikiArt Face Image
+files_all = []
+for a in available_artist():
+  tmp = api.get_painting(a, image_type='face_blur')
+  if tmp is not None:
+    files_all += tmp
+
+# Get WikiArt Face Image only for some art movements
+files = []
+artists = get_artist(['post-impressionism', 'impressionism', 'neo-impressionism'])
+for a in artists:
+  tmp = api.get_painting(a, image_type='face_blur')
+  if tmp is not None:
+    files += tmp
 ```
 
 To reproduce the entire WikiArt Face image set, you can check [these scripts](./examples/generate_face_data).
