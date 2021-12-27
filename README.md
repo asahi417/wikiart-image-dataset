@@ -44,7 +44,6 @@ Below table shows the image size per each art movement.
 | romanticism                |          1,502 |
 | surrealism                 |             78 |
 | symbolism                  |            571 |
-|---|---|
 | All                        |          6,095 |
 
 ### WikiART General
@@ -77,7 +76,6 @@ Below table shows the image size per each art movement and the painting style.
 | romanticism                |              4,305 |                       1,081 |                         855 |                    2,369 |
 | surrealism                 |               612 |                         67 |                          78 |                     467 |
 | symbolism                  |              2,703 |                        381 |                         657 |                    1,665 |
----
 | All                        |             25,612 |                       6,126 |                        5,872 |                   13,614 |
 
 ## WikiART Crawler
