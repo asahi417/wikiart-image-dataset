@@ -83,63 +83,63 @@ Below table shows the image size per each art movement and the painting style.
 ## WikiART Crawler
 First clone/install the library.
 ```shell
-git clone https://github.com/asahi417/wikiart-crawler
-cd wikiart-crawler
+git clone https://github.com/asahi417/wikiart-image-dataset
+cd wikiart-image-dataset
 pip install .
 ```
 
 The basic usage is to specify a single artist and get the file paths of the artist's image downloaded locally at the first time
 (the cache directory is `~/.cache/wikiartcrawler` as default).
+
 ```python
 from wikiartcrawler import WikiartAPI
 api = WikiartAPI()
-image_path = api.get_painting('paul-cezanne')
+# get Paul Cezanne's image
+image_path = api.get_painting('paul-cezanne', media=['canvas', 'oil'])
+# get portrait only 
+image_path_portrait = api.get_painting('paul-cezanne', media=['canvas', 'oil'], style=['portrait'])
+# get landscape only 
+image_path_landscape = api.get_painting('paul-cezanne', media=['canvas', 'oil'], style=['landscape'])
 ```
 
-`abstract-expressionism`, `baroque`, `ecole-de-paris`, `expressionism`, 
-`impressionism`, `naive-art-primitivism`, `neo-impressionism`, `neoclassicism`, `post-impressionism`, 
-`pre-raphaelite-brotherhood`, `realism`, `rococo`, `romanticism`, `surrealism`, and `symbolism`.
+To see all the alias of artist name in the API, 
+```python
+from wikiartcrawler import artist_group
+print(artist_group.available_artist())
+```
 
-The list of available artist name alias can be found by `api.artist_wikiart`. You can also use a name of an art movement.
+You can use art movement to group the artist
 
 ```python
-from wikiartcrawler import WikiartAPI
-from wikiartcrawler import artist_group
+from wikiartcrawler import WikiartAPI, get_artist
 api = WikiartAPI()
-
-artist_group = artist_group.impressionism  # list of artist name
+# list of artist alias related to the art movement
+artist_group = get_artist('impressionism') 
+# collect all the image file from each artist in the art movement
 files = []
 for artist in artist_group:
-    files += api.get_painting(artist)
+  tmp = api.get_painting(artist)
+  if tmp is not None:
+    files += tmp
 ```
 
-The `artist_group` method has `abstract-expressionism`, `baroque`, `ecole-de-paris`, `expressionism`, 
+The availabe art movements are `abstract-expressionism`, `baroque`, `ecole-de-paris`, `expressionism`, 
 `impressionism`, `naive-art-primitivism`, `neo-impressionism`, `neoclassicism`, `post-impressionism`, 
 `pre-raphaelite-brotherhood`, `realism`, `rococo`, `romanticism`, `surrealism`, and `symbolism`.
 
-One can specify more fine-grained queries with `get_painting` as below.
-```python
-from wikiartcrawler import WikiartAPI
-api = WikiartAPI()
-# portrait only
-api.get_painting('paul-cezanne', media=['oil', 'canvas'], style=['portrait'])
-# landscape only
-api.get_painting('paul-cezanne', media=['oil', 'canvas'], style=['landscape'])
-```
+### Use WikiART Face
+To use WikiART Face image, you need to specify it by the `image_type` argument.
 
-## WikiArt Face
-
-This image is available via the `wikiartcrawler` by specifying `image_type` argument.
 ```python
 from wikiartcrawler import WikiartAPI
 api = WikiartAPI()
 # WikiArt Face  
-files = api.get_painting('paul-cezanne', image_type='face')
+image_path = api.get_painting('paul-cezanne', image_type='face')
 # WikiArt Face (with background blur)
-files = api.get_painting('paul-cezanne', image_type='face_blur')
+image_path = api.get_painting('paul-cezanne', image_type='face_blur')
 ```
 
-To reproduce the WikiArt Face image set, you can use [these scripts](./examples/generate_face_data).
+To reproduce the entire WikiArt Face image set, you can check [these scripts](./examples/generate_face_data).
 
 ## Dataset Links
 - ***WikiArt General***: The image files are divided by each art movement.
