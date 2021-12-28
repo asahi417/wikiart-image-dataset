@@ -1,7 +1,7 @@
 # WikiART Face/WikiART General Imageset & WikiART Crawler
 
 <p align="center">
-<img src="assets/wikiart_face_image.png" width="600"><br>
+<img src="assets/wikiart_face_image.png" width="650"><br>
 <em>Figure 1: Samples from WikiART Face dataset.</em>
 </p>
 
@@ -17,7 +17,7 @@ Or check [dataset links section](#dataset-links) to directly download the zip fi
 ### WikiART Face
 
 <p align="center">
-<img src="assets/face_image_pipeline.png" width="500"><br>
+<img src="assets/face_image_pipeline.png" width="650"><br>
 <em>Figure 2: Pipeline to produce single WikiART Face image.</em>
 </p>
 
