@@ -49,10 +49,8 @@ Below table shows the image size per each art movement.
 ### WikiART General
 
 <p align="center">
-  <img src="assets/wikiart_portrait.png" width="200">
-  <img src="assets/wikiart_landscape.png" width="200">
-  <img src="assets/wikiart_others.png" width="200"><br>
-<em> Figure 3: Samples from WikiART General (`portrait`, `landscape`, `other` from left to right). </em>
+  <img src="assets/wikiart_general.png" width="700"> <br>
+<em> Figure 3: Samples from WikiART General. </em>
 </p>
 
 WikiART General is an image set of artwork image attained from WikiART via our WikiART Crawler. We normalize the image size to be 256 x 256 by center crop.
