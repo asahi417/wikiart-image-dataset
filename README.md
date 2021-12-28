@@ -49,7 +49,7 @@ Below table shows the image size per each art movement.
 ### WikiART General
 
 <p align="center">
-  <img src="assets/wikiart_general.png" width="700"> <br>
+  <img src="assets/wikiart_general.png" width="900"> <br>
 <em> Figure 3: Samples from WikiART General. </em>
 </p>
 
