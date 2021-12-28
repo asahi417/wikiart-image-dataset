@@ -17,7 +17,7 @@ Or check [dataset links section](#dataset-links) to directly download the zip fi
 ### WikiART Face
 
 <p align="center">
-<img src="assets/face_image_pipeline.png" width="650"><br>
+<img src="assets/face_image_pipeline.png" width="700"><br>
 <em>Figure 2: Pipeline to produce single WikiART Face image.</em>
 </p>
 
