@@ -196,7 +196,8 @@ class WikiartAPI:
                  cache_dir='{}/tmp'.format(self.cache_dir))
             shutil.move('{}/tmp/image_face_blur'.format(self.cache_dir), target_dir)
 
-        shutil.rmtree('{}/tmp'.format(self.cache_dir))
+        if os.path.exists('{}/tmp'.format(self.cache_dir)):
+            shutil.rmtree('{}/tmp'.format(self.cache_dir))
 
     def get_full_group(self, force_refresh_artist_id):
         cache_file = '{}/dictionaries.json'.format(self.cache_dir)
