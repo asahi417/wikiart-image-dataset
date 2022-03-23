@@ -44,6 +44,7 @@ def load_artists(group_name):
         from .groups.symbolism import groups
     else:
         raise ValueError('unknown group: {}'.format(group_name))
+    return groups
 
 
 def available_artist(cache_dir: str = None):
@@ -57,6 +58,8 @@ def get_artist(groups: List or str, cache_dir: str = None):
     _artist = available_artist(cache_dir)
     full_artist = []
     for g in groups:
+        print(_artist)
+        print(g)
         full_artist += list(filter(lambda x: x in _artist, load_artists(g)))
     return sorted(list(set(full_artist)))
 
