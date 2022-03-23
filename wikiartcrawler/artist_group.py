@@ -57,7 +57,7 @@ def get_artist(groups: List or str, cache_dir: str = None):
     _artist = available_artist(cache_dir)
     full_artist = []
     for g in groups:
-        full_artist += list(filter(lambda x: x in _artist, load_txt(g+'.txt')))
+        full_artist += list(filter(lambda x: x in _artist, load_artists(g)))
     return sorted(list(set(full_artist)))
 
 
