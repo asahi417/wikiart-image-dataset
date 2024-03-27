@@ -1,17 +1,19 @@
 # WikiART Face/WikiART General Imageset & WikiART Crawler
 
+
 <p align="center">
 <img src="assets/wikiart_face_image.png" width="650"><br>
 <em>Figure 1: Samples from WikiART Face dataset.</em>
 </p>
 
-This is an official repository of [***WikiART Crawler***](#wikiart-crawler), a python-library to download/process images from [WikiART](https://www.wikiart.org/) via WikiART API,
-and two following image datasets created with the WikiART Crawler.
+This is a repository for [***WikiART Crawler***](#wikiart-crawler), a python-library to download/process images from
+[WikiART](https://www.wikiart.org/) via WikiART API. We also have released following two image datasets created 
+with the WikiART Crawler.
 
-- [***WikiART Face***](#wikiart-face): Image dataset of face produced from the portraits attained via WikiART Crawler. 
-- [***WikiART General***](#wikiart-general): Image dataset of paintings (landscape and portrait) attained via WikiART Crawler.
+- [***WikiART Face***](#wikiart-face): Facial image dataset extracted from the portraits obtained via WikiART Crawler. 
+- [***WikiART General***](#wikiart-general): Image dataset of paintings (landscape and portrait) obtained via WikiART Crawler.
 
-To use the datasets, one can use it via [WikiART Crawler](#wikiart-crawler) that allows fine-grained controll of the dataset. 
+The datasets can be used via [WikiART Crawler](#wikiart-crawler) that allows fine-grained control of the dataset. 
 Or check [dataset links section](#dataset-links) to directly download the zip files. 
 
 ### WikiART Face
