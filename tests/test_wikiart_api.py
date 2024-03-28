@@ -9,7 +9,7 @@ logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logg
 
 
 class Test(unittest.TestCase):
-    """ Test ISR model"""
+    """Test WikiART API"""
 
     def test_face_image(self):
         artist = '*'

@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 with open('README.md', 'r') as f:
     readme = f.read()
 
-VERSION = '0.0.0'
+VERSION = '1.0.0'
 setup(
     name='wikiartcrawler',
     packages=find_packages(exclude=['tests']),
@@ -30,14 +30,6 @@ setup(
     install_requires=[
         "tqdm",
         "requests",
-        "gdown",
-        "pandas",
-        'numpy',
-        'opencv-python',
-        "mediapipe",
-        'ISR',
-        "pillow",
-        "gdown"
     ]
 )
 

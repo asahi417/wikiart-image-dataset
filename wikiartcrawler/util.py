@@ -4,8 +4,6 @@ import zipfile
 import gzip
 import requests
 
-import gdown
-
 
 __all__ = 'wget'
 
@@ -38,9 +36,9 @@ def new_file_path(path, suffix, export_dir: str = None):
     return path
 
 
-def wget(url, cache_dir: str, gdrive_filename: str = None):
+def wget(url, cache_dir: str):
     """ wget and uncompress data_iterator """
-    path = _wget(url, cache_dir, gdrive_filename=gdrive_filename)
+    path = _wget(url, cache_dir)
     if path.endswith('.tar.gz') or path.endswith('.tgz') or path.endswith('.tar'):
         if path.endswith('.tar'):
             tar = tarfile.open(path)
@@ -60,12 +58,9 @@ def wget(url, cache_dir: str, gdrive_filename: str = None):
         os.remove(path)
 
 
-def _wget(url: str, cache_dir, gdrive_filename: str = None):
+def _wget(url: str, cache_dir):
     """ get data from web """
     os.makedirs(cache_dir, exist_ok=True)
-    if url.startswith('https://drive.google.com'):
-        assert gdrive_filename is not None, 'please provide fileaname for gdrive download'
-        return gdown.download(url, '{}/{}'.format(cache_dir, gdrive_filename), quiet=False)
     filename = os.path.basename(url)
     with open('{}/{}'.format(cache_dir, filename), "wb") as f:
         r = requests.get(url)
