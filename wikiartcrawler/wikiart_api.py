@@ -20,7 +20,7 @@ from tqdm import tqdm
 
 from .util import wget, URL_LIST
 
-CACHE_DIR = '{}/.cache/wikiartcrawler'.format(os.path.expanduser('~'))
+CACHE_DIR = f"{os.path.expanduser('~')}/.cache/wikiartcrawler"
 os.makedirs(CACHE_DIR, exist_ok=True)
 CUSTOM_ARTISTS = {
     'francis-bacon': '57726d7fedc2cb3880b4812f',
@@ -41,21 +41,18 @@ def api_request(url, session_key: str = None, ignore_error: bool = False):
             _data = _response.json()
         except json.decoder.JSONDecodeError:
             if not ignore_error:
-                raise ValueError('JSONDecodeError: {}'.format(str(_response)))
-            logging.warning('JSONDecodeError: {}'.format(str(_response)))
+                raise ValueError(f'JSONDecodeError: {str(_response)}')
+            logging.warning(f'JSONDecodeError: {str(_response)}')
             return None
         if _response.status_code != 200:
             if not ignore_error:
-                raise ValueError('API error\n\t url: {}\n\t error: {}'.format(url, _data))
-            logging.warning('API error\n\t url: {}\n\t error: {}'.format(url, _data))
+                raise ValueError(f'API error\n\t url: {url}\n\t error: {_data}')
+            logging.warning(f'API error\n\t url: {url}\n\t error: {_data}')
             return None
         return _data
 
     if session_key is not None:
-        if '?' in url:
-            url = '{}&authSessionKey={}'.format(url, session_key)
-        else:
-            url = '{}?authSessionKey={}'.format(url, session_key)
+        url = f'{url}&authSessionKey={session_key}' if '?' in url else f'{url}?authSessionKey={session_key}'
 
     response = requests.get(url)
     data = validate_response(response)
@@ -68,11 +65,10 @@ def api_request(url, session_key: str = None, ignore_error: bool = False):
     if 'hasMore' not in data:
         return full_list
     while data['hasMore']:
-        if '?' in url:
-            _url = '{}&paginationToken={}'.format(url, data['paginationToken'])
-        else:
-            _url = '{}?paginationToken={}'.format(url, data['paginationToken'])
-        response = requests.get(_url)
+        token = data['paginationToken']
+        response = requests.get(
+            f'{url}&paginationToken={token}' if '?' in url else f'{url}?paginationToken={token}'
+        )
         data = validate_response(response)
         if data is None:
             break
@@ -81,8 +77,11 @@ def api_request(url, session_key: str = None, ignore_error: bool = False):
 
 
 def get_session_key(access_code: str, secret_code: str):
-    data = api_request('https://www.wikiart.org/en/Api/2/login?accessCode={}&secretCode={}'.format(
-        access_code, secret_code), ignore_error=True)
+    data = api_request(
+        f'https://www.wikiart.org/en/Api/2/login?accessCode={access_code}&secretCode={secret_code}',
+        secret_code,
+        ignore_error=True
+    )
     if data is None:
         return None
     if 'SessionKey' not in data:
@@ -91,14 +90,14 @@ def get_session_key(access_code: str, secret_code: str):
 
 
 def get_image(url, export_path):
-    """ Download image from url. """
+    """Download image from url."""
     img_data = requests.get(url).content
     with open(export_path, 'wb') as handler:
         handler.write(img_data)
 
 
 def get_painting_detail(paint_id: str = '57e00504edc2ca0d8c0b38a2', session_key: str = None):
-    return api_request('https://www.wikiart.org/en/api/2/Painting?id={}'.format(paint_id), session_key)
+    return api_request(f'https://www.wikiart.org/en/api/2/Painting?id={paint_id}', session_key)
 
 
 class WikiartAPI:
@@ -135,7 +134,7 @@ class WikiartAPI:
             self._session_key = None
 
         if self._session_key is not None:
-            logging.info('{} session keys: {}'.format(len(self._session_key), self._session_key))
+            logging.info(f'{len(self._session_key)} session keys: {self._session_key}')
         else:
             logging.info('No session keys provided')
 
@@ -161,52 +160,61 @@ class WikiartAPI:
 
     def download_cached_images(self, force_refresh_artist_id):
         logging.info('downloading cached image (this might take some time)')
-        os.makedirs('{}/tmp'.format(self.cache_dir), exist_ok=True)
-        target_dir = '{}/painting/meta'.format(self.cache_dir)
+        os.makedirs(f'{self.cache_dir}/tmp', exist_ok=True)
+        target_dir = f'{self.cache_dir}/painting/meta'
         if not os.path.exists(target_dir) or force_refresh_artist_id:
             os.makedirs(os.path.dirname(target_dir), exist_ok=True)
-            wget('https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/meta.zip',
-                 cache_dir='{}/tmp'.format(self.cache_dir))
-            shutil.move('{}/tmp/meta'.format(self.cache_dir), target_dir)
+            wget(
+                'https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/meta.zip',
+                cache_dir=f'{self.cache_dir}/tmp'
+            )
+            shutil.move(f'{self.cache_dir}/tmp/meta', target_dir)
 
-        target_dir = '{}/painting/image'.format(self.cache_dir)
+        target_dir = f'{self.cache_dir}/painting/image'
         if not os.path.exists(target_dir) or force_refresh_artist_id:
             os.makedirs(os.path.dirname(target_dir), exist_ok=True)
             for k, url in URL_LIST.items():
-                cache_dir = '{}/tmp/{}'.format(self.cache_dir, k)
+                cache_dir = f'{self.cache_dir}/tmp/{k}'
                 if not os.path.exists(cache_dir):
-                    wget(url, cache_dir='{}/tmp'.format(self.cache_dir))
-                for d in glob('{}/tmp/{}/*'.format(self.cache_dir, k)):
-                    target_dir = '{}/painting/image/{}'.format(self.cache_dir, os.path.basename(d))
+                    wget(url, cache_dir=f'{self.cache_dir}/tmp')
+                for d in glob(f'{self.cache_dir}/tmp/{k}/*'):
+                    target_dir = f'{self.cache_dir}/painting/image/{os.path.basename(d)}'
                     if os.path.exists(target_dir):
                         shutil.rmtree(d)
                     else:
                         shutil.move(d, os.path.dirname(target_dir))
-        logging.info('{} images in total'.format(len(glob('{}/painting/image/*/*.jpg'.format(self.cache_dir)))))
+        n_images = len(glob(f'{self.cache_dir}/painting/image/*/*.jpg'))
+        logging.info(f'{n_images} images in total')
 
-        target_dir = '{}/painting/image_face'.format(self.cache_dir)
+        target_dir = f'{self.cache_dir}/painting/image_face'
         if not os.path.exists(target_dir) or force_refresh_artist_id:
-            wget('https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/image_face.zip',
-                 cache_dir='{}/tmp'.format(self.cache_dir))
-            shutil.move('{}/tmp/image_face'.format(self.cache_dir), target_dir)
+            wget(
+                'https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/image_face.zip',
+                cache_dir=f'{self.cache_dir}/tmp'
+            )
+            shutil.move(f'{self.cache_dir}/tmp/image_face', target_dir)
 
-        target_dir = '{}/painting/image_face_blur'.format(self.cache_dir)
+        target_dir = f'{self.cache_dir}/painting/image_face_blur'
         if not os.path.exists(target_dir) or force_refresh_artist_id:
-            wget('https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/image_face_blur.zip',
-                 cache_dir='{}/tmp'.format(self.cache_dir))
-            shutil.move('{}/tmp/image_face_blur'.format(self.cache_dir), target_dir)
+            wget(
+                'https://github.com/asahi417/wikiart-crawler/releases/download/v0.0.0/image_face_blur.zip',
+                cache_dir=f'{self.cache_dir}/tmp'
+            )
+            shutil.move(f'{self.cache_dir}/tmp/image_face_blur', target_dir)
 
-        if os.path.exists('{}/tmp'.format(self.cache_dir)):
-            shutil.rmtree('{}/tmp'.format(self.cache_dir))
+        if os.path.exists(f'{self.cache_dir}/tmp'):
+            shutil.rmtree(f'{self.cache_dir}/tmp')
 
     def get_full_group(self, force_refresh_artist_id):
-        cache_file = '{}/dictionaries.json'.format(self.cache_dir)
+        cache_file = f'{self.cache_dir}/dictionaries.json'
         if os.path.exists(cache_file) and not force_refresh_artist_id:
             with open(cache_file) as f:
                 return json.load(f)
         if not force_refresh_artist_id:
-            wget('https://raw.githubusercontent.com/asahi417/wikiart-crawler/master/assets/dictionaries.json',
-                 cache_dir=self.cache_dir)
+            wget(
+                'https://raw.githubusercontent.com/asahi417/wikiart-crawler/master/assets/dictionaries.json',
+                cache_dir=self.cache_dir
+            )
             with open(cache_file) as f:
                 return json.load(f)
         assert not self.skip_download
@@ -217,15 +225,17 @@ class WikiartAPI:
         return data
 
     def get_full_artist(self, force_refresh_artist_id):
-        cache_file = '{}/artists.json'.format(self.cache_dir)
+        cache_file = f'{self.cache_dir}/artists.json'
         # logging.warning("This endpoint has an issue and will return partial list only.")
         if os.path.exists(cache_file) and not force_refresh_artist_id:
             with open(cache_file) as f:
                 return json.load(f)
 
         if not force_refresh_artist_id:
-            wget('https://raw.githubusercontent.com/asahi417/wikiart-crawler/master/assets/artists.json',
-                 cache_dir=self.cache_dir)
+            wget(
+                'https://raw.githubusercontent.com/asahi417/wikiart-crawler/master/assets/artists.json',
+                cache_dir=self.cache_dir
+            )
             with open(cache_file) as f:
                 return json.load(f)
 
@@ -234,13 +244,12 @@ class WikiartAPI:
         data = api_request('https://www.wikiart.org/en/api/2/UpdatedArtists', self.session_key, ignore_error=True)
         data = {i['url']: i['id'] for i in data}
         data.update(CUSTOM_ARTISTS)
-        logging.info('`UpdatedArtists` returned {} artists'.format(len(data)))
+        logging.info(f'`UpdatedArtists` returned {len(data)} artists')
 
         # heuristics to cover more artists
         logging.info('heuristics query to enrich the artist list')
         for a, b in tqdm(list(permutations(ascii_lowercase, 2))):
-            _data = api_request('https://www.wikiart.org/en/api/2/PaintingSearch?term={}{}'.format(a, b),
-                                self.session_key)
+            _data = api_request(f'https://www.wikiart.org/en/api/2/PaintingSearch?term={a}{b}', self.session_key)
             if _data is None:
                 break
 
@@ -263,21 +272,20 @@ class WikiartAPI:
                           min_height: int = None,
                           min_width: int = None):
 
-        assert artist_url in self.dict_artist, '{} not found in the artist list'.format(artist_url)
+        assert artist_url in self.dict_artist, f'{artist_url} not found in the artist list'
         artist_id = self.dict_artist[artist_url]
-        cache_file = '{}/painting/meta/{}.json'.format(self.cache_dir, artist_url)
+        cache_file = f'{self.cache_dir}/painting/meta/{artist_url}.json'
         if not os.path.exists(cache_file):
             os.makedirs(os.path.dirname(cache_file), exist_ok=True)
             if self.skip_download:
                 return None
             painting_info = api_request(
-                'https://www.wikiart.org/en/api/2/PaintingsByArtist?id={}'.format(artist_id),
+                f'https://www.wikiart.org/en/api/2/PaintingsByArtist?id={artist_id}',
                 self.session_key)
-            logging.info('requesting detail information of paintings: {}, artist:{}'.format(artist_url, artist_url))
+            logging.info(f'requesting detail information of paintings: {artist_url}, artist:{artist_url}')
             for _data in tqdm(painting_info):
                 if 'FRAME-600x480' in _data['image']:
-                    logging.warning('Artworks of {} are not available in your country on copyright grounds.'.format(
-                        artist_url))
+                    logging.warning(f'Artworks of {artist_url} are not available in your country on copyright grounds.')
                     return []
                 _data['detail'] = get_painting_detail(_data['id'], self.session_key)
             with open(cache_file, 'w') as f:
@@ -330,14 +338,14 @@ class WikiartAPI:
                      image_type: str = None):
         raw_image = True
         if image_type is not None:
-            image_type = 'image_{}'.format(image_type)
+            image_type = f'image_{image_type}'
             raw_image = False
         else:
             image_type = 'image'
 
         if all(i is None for i in [year_start, year_end, media, genre, style, max_aspect_ratio, min_height, min_width]) \
                 and self.skip_download:
-            paths = glob('{}/painting/{}/{}/*.jpg'.format(self.cache_dir, image_type, artist_url))
+            paths = glob(f'{self.cache_dir}/painting/{image_type}/{artist_url}/*.jpg')
             return paths if len(paths) != 0 else None
 
         painting_info = self.get_painting_info(
@@ -345,21 +353,21 @@ class WikiartAPI:
         )
         if painting_info is None:
             return None
-        logging.info('downloading image: {} images, artist: {}'.format(len(painting_info), artist_url))
-        cache_dir = '{}/painting/{}/{}'.format(self.cache_dir, image_type, artist_url)
+        logging.info(f'downloading image: {len(painting_info)} images, artist: {artist_url}')
+        cache_dir = f'{self.cache_dir}/painting/{image_type}/{artist_url}'
         os.makedirs(cache_dir, exist_ok=True)
         image_files = []
         for data in painting_info:
             if 'FRAME-600x480' in data['image']:
-                logging.warning('access blocked: {}'.format(data))
+                logging.warning(f'access blocked: {data}')
                 continue
             _id = data['image'].split('.')[-1]
-            path = '{}/{}.{}'.format(cache_dir, data['url'], _id)
+            path = f"{cache_dir}/{data['url']}.{_id}"
             if not os.path.exists(path):
                 if self.skip_download or not raw_image:
-                    logging.info('file not found but skip download: {}'.format(path))
+                    logging.info(f'file not found but skip download: {path}')
                     continue
-                logging.info('file not found, downloading {}'.format(path))
+                logging.info(f'file not found, downloading {path}')
                 get_image(data['image'], path)
             image_files.append(path)
         return image_files if len(image_files) != 0 else None
