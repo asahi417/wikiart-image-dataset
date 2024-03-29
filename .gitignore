@@ -3,3 +3,4 @@ wikiart_credential.json
 image-super-resolution
 data
 data_cache
+examples/push_wikiart_image_to_hf.py

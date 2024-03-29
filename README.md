@@ -6,6 +6,8 @@
 <em>Figure 1: Samples from WikiART Face dataset.</em>
 </p>
 
+***News:*** WikiART Face is available in huggingface. Check the repo at [asahi417/wikiart_face](https://huggingface.co/datasets/asahi417/wikiart_face).
+
 This is a repository for [***WikiART Crawler***](#wikiart-crawler), a python-library to download/process images from
 [WikiART](https://www.wikiart.org/) via WikiART API. We also have released following two image datasets created 
 with the WikiART Crawler.
@@ -27,7 +29,7 @@ WikiART Face is a collection of face from paintings. Inspired by the largest hum
 we process all the portraits from WikiART with the pipeline described in Figure 2. 
 As the final step, we blur the corner of each image so that model can pay more attention on the face rather than the background.
 We release both version of the dataset w/wo the final blur step.
-Below table shows the image size per each art movement.
+Below table shows the image size per each art movement. The dataset is available on huggingface (see [here](https://huggingface.co/datasets/asahi417/wikiart_face))
 
 |  Art Movement              |   WikiART Face |
 |:---------------------------|---------------:|
